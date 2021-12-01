@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 
-function QuestionForm(props) {
+function QuestionForm({questions, setQuestions, setPage}) {
   const [formData, setFormData] = useState({
     prompt: "",
     answer1: "",
@@ -18,9 +18,47 @@ function QuestionForm(props) {
   }
 
   function handleSubmit(event) {
-    event.preventDefault();
-    console.log(formData);
+    event.preventDefault()
+    console.log('hsub', [...questions])
+    const formObject = {
+      prompt: formData.prompt,
+      answers: [formData.answer1, formData.answer2, formData.answer3, formData.answer4],
+      correctIndex: parseInt(formData.correctIndex)
+    }
+    fetch('http://localhost:4000/questions', {
+      method: "POST",
+      headers: {"Content-Type": "application/json",},
+      body: JSON.stringify(formObject),
+    })
+      .then((res) => res.json())
+      .then(formObject => setQuestions([...questions, formObject]));
+    setPage('List')
   }
+
+//   Required Headers:
+// { "Content-Type": "application/json" }
+
+// Body:
+// {
+//   "prompt": string,
+//   "answers": array of strings,
+//   "correctIndex": integer
+// }
+  // function handleSubmit (event) {
+  //   event.preventDefault()
+  //   const itemData = {
+  //     name: name,
+  //     category: category,
+  //     isInCart: false
+  //   }
+  //   fetch('http://localhost:4000/items', {
+  //     method: "POST",
+  //     headers: {"Content-Type": "application/json",},
+  //     body: JSON.stringify(itemData),
+  //   })
+  //   .then(res => res.json())
+  //   .then((newItem) => onAddItem(newItem))
+  // }
 
   return (
     <section>
